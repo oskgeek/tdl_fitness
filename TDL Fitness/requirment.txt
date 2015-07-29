@@ -1,0 +1,9 @@
+
+1- Software will be easily adapted into an app in the future. [Not Possible with this WebApp]
+2- It needs to all be drop down menus. [DONE]
+3- It should all be in perfectly printable format.(the user should be able to request a printable version which is clear). [DONE]
+4- The user should be able to go through a register that is very detailed in terms of mini headings of exercises. [DONE]
+5- The template suggested should be as user friendly as possible and should allow for flexibility of almost everything.
+6- We need to be sure that the software can't be copied. [DONE]
+7- Attached needs to be the details i provided earlier about consulting your doctor. [DONE]
+8- There needs to be some sort of forced reminder to change the user's schedule every 8 weeks maximum. 
