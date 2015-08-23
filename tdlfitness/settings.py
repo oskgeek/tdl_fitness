@@ -10,7 +10,18 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from os.path import abspath, dirname, join
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
+from django.contrib import messages
+    
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+PROJECT_ROOT = abspath(dirname(__file__))
+
+STATIC_ROOT = join(PROJECT_ROOT, '../static/')
+MEDIA_ROOT = join(PROJECT_ROOT, '../media/')
+MEDIA_URL = '/media/'
+STATIC_URL = '/static/'
 
 
 # Quick-start development settings - unsuitable for production
