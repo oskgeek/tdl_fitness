@@ -47,11 +47,13 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'plan_marker',
+    'corsheaders',
+    'plan_marker',    
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -61,7 +63,7 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'tdlfitness.urls'
-
+CORS_ORIGIN_ALLOW_ALL = True
 WSGI_APPLICATION = 'tdlfitness.wsgi.application'
 
 
