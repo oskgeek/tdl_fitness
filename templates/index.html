@@ -111,9 +111,9 @@
                 data: $('#signupform').serialize(),
             })
             .done(function(res) {
-                if (res.status == 'OK') {
-                    window.location.replace("/home.html");
-                };
+                $('#signupbox').fadeOut('fast', function () {
+                    $('#loginbox').fadeIn('fast');
+                });
                 console.log("signup success");
             })
             .fail(function() {
@@ -132,6 +132,9 @@
                 data: $('#loginform').serialize(),
             })
             .done(function() {
+                if (res.status == 'OK') {
+                    window.location.replace("/templates/home.html");
+                };
                 console.log("login success");
             })
             .fail(function() {
