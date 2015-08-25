@@ -22,9 +22,12 @@ def login(request):
         if user is not None:
             response_dict['status'] = 'OK'
             response_dict['user_type'] = user.userprofile.group
-            response_dict['last_login'] = user.last_login or datetime.datetime.now()
-
+            response_dict['last_login'] = user.last_login or str(datetime.datetime.now())
+        else:
+            response_dict['status'] = 'FAILED'
+            
     return HttpResponse(json.dumps(response_dict))
+
 
 @csrf_exempt
 def signup(request):

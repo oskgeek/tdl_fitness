@@ -9,7 +9,7 @@
     <script src="lib/js/bootstrap.min.js"></script>
 </head>
 <body>
-	<div class="container">
+    <div class="container">
         <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">                    
             <div class="panel panel-info">
                 <div class="panel-heading">
@@ -27,11 +27,11 @@
                             <input id="login-password" type="password" class="form-control" name="password" placeholder="password" required>
                         </div>
                         <div class="input-group">
-                          	<div class="checkbox">
-                            	<label>
-                             		<input id="login-remember" type="checkbox" name="remember" value="1"> Remember me
-                            	</label>
-                          	</div>
+                            <div class="checkbox">
+                                <label>
+                                    <input id="login-remember" type="checkbox" name="remember" value="1"> Remember me
+                                </label>
+                            </div>
                         </div>
                         <div style="margin-top:10px" class="form-group">
                             <!-- Button -->
@@ -105,7 +105,7 @@
         });
         $('#btn-signup').click(function(event) {
             $.ajax({
-                url: '/signup/',
+                url: 'http://localhost:8000/signup/',
                 type: 'POST',
                 dataType: 'json',
                 data: $('#signupform').serialize(),
@@ -123,7 +123,7 @@
         });
         $('#btn-login').click(function(event) {
             $.ajax({
-                url: '/login/',
+                url: 'http://localhost:8000/login/',
                 type: 'POST',
                 dataType: 'json',
                 data: $('#loginform').serialize(),
