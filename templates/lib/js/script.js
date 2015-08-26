@@ -1,4 +1,4 @@
-$(document).ready(function() {
+function init() {
 
     /* initialize the external events
     -----------------------------------------------------------------*/
@@ -16,7 +16,6 @@ $(document).ready(function() {
             revert: true,      // will cause the event to go back to its
             revertDuration: 0  //  original position after the drag
         });
-
     });
         
     /* initialize the calendar
@@ -144,7 +143,7 @@ $(document).ready(function() {
         window.print();
     })
     
-});
+};
 
 var obj = {};
 function saveChanges(id, elem) {
