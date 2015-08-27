@@ -77,6 +77,7 @@ $(function () {
         if (oReq.status == 200) {
             $('#addExerciseModal').modal('hide');
             console.log('Uploaded!');
+
         } else {
             console.log('Error' + oReq.status + ' occurred when trying to upload your file.<br \/>');
         }
@@ -84,6 +85,9 @@ $(function () {
 
       oReq.send(oData);
     }, false);
+    $.get('http://localhost:8000/excercise/', function(data) {
+        console.log(data);
+    });
 })
 function setCookie(cname, cvalue) {
 
