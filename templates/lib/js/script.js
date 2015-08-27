@@ -11,6 +11,7 @@ $(function () {
     };
     
     $('#btn-signup').click(function(event) {
+        var $that = $(this);
         $.ajax({
             url: 'http://localhost:8000/signup/',
             type: 'POST',
@@ -21,17 +22,17 @@ $(function () {
             if (res.status == 'OK') {
                 $('#signupbox').hide()
                 $('#loginbox').show();
-            };
-            console.log("signup success");
+            }
+            else if (res.status == 'FAILED'){
+                errorAlert($that, res.Error);
+            }
         })
         .fail(function() {
-            console.log("signup error");
+            errorAlert($(that), '');
         })
-        .always(function() {
-            console.log("signup complete");
-        });
     });
     $('#btn-login').click(function(event) {
+        var $that = $(this);
         $.ajax({
             url: 'http://localhost:8000/login/',
             type: 'POST',
@@ -47,15 +48,14 @@ $(function () {
                 setCookie('tdl_email', email);
                 setCookie('tdl_pw', pw);
                 init();
-            };
-            console.log("login success");
+            }
+            else if (res.status == 'FAILED'){
+                errorAlert($that, res.Error);
+            }
         })
         .fail(function() {
-            console.log("login error");
+            errorAlert($that, '');
         })
-        .always(function() {
-            console.log("login complete");
-        });
     });
     $('#sign_out').click(function(event) {
         document.cookie = "tdl_email=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
@@ -300,4 +300,14 @@ function Popup(data) {
     mywindow.close();
 
     return true;
+}
+function errorAlert (elem, error) {
+    if ($('.alert-danger').length == 0) {
+        var defaultMsg = 'Something went Wrong!';
+        error = error?error:defaultMsg;
+        var err = '<div class="alert alert-danger alert-dismissible" role="alert">'
+                +'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                +'<strong>Oops!</strong>'+error+'</div>';
+        $(elem).before(err);
+    };
 }
