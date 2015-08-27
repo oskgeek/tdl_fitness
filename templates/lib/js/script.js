@@ -62,32 +62,44 @@ $(function () {
         document.cookie = "tdl_pw=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
         window.location.reload();
     });
-    var form = document.forms.namedItem("add_ex_form");
-    form.addEventListener('submit', function(ev) {
-      ev.preventDefault();
 
-      var oOutput = document.querySelector("div"),
-          oData = new FormData(form);
+    /* Add Exercise POST */
+        var form = document.forms.namedItem("add_ex_form");
+        form.addEventListener('submit', function(ev) {
+          ev.preventDefault();
 
-      oData.append("CustomField", "This is some extra data");
+          var oOutput = document.querySelector("div"),
+              oData = new FormData(form);
 
-      var oReq = new XMLHttpRequest();
-      oReq.open("POST", "http://localhost:8000/excercise/", true);
-      oReq.onload = function(oEvent) {
-        if (oReq.status == 200) {
-            $('#addExerciseModal').modal('hide');
-            console.log('Uploaded!');
+          oData.append("CustomField", "This is some extra data");
 
-        } else {
-            console.log('Error' + oReq.status + ' occurred when trying to upload your file.<br \/>');
-        }
-      };
+          var oReq = new XMLHttpRequest();
+          oReq.open("POST", "http://localhost:8000/excercise/", true);
+          oReq.onload = function(oEvent) {
+            if (oReq.status == 200) {
+                window.location.reload();
 
-      oReq.send(oData);
-    }, false);
+            } else {
+                console.log('Error' + oReq.status + ' occurred when trying to upload your file.<br \/>');
+            }
+          };
+
+          oReq.send(oData);
+        }, false);
+    /* Add Exercise POST - END */
+
     $.get('http://localhost:8000/excercise/', function(data) {
-        console.log(data);
+        var data = $.parseJSON(data);
+        if (data.status == 'OK') {
+            $.each(data.data, function(index, val) {
+                var file_path = val[1].split('..')[1];
+                $('#external-events').append('<div class="fc-event"><div><img src="http://localhost:8000'+file_path+'"></div>'+val[0]+'</div>')
+            });
+            initExternalEvents();
+        };
     });
+    var calendar_height = $('#calendar').height();
+    $('#external-events').css('height', calendar_height);
 })
 function setCookie(cname, cvalue) {
 
@@ -109,11 +121,8 @@ function checkCookie(cname) {
         return true;
     }
 }
-function init() {
-
-    /* initialize the external events
-    -----------------------------------------------------------------*/
-
+/* initialize the external events */
+function initExternalEvents () {
     $('#external-events .fc-event').each(function() {
         // store data so the calendar knows to render an event upon drop
         $(this).data('event', {
@@ -128,9 +137,9 @@ function init() {
             revertDuration: 0  //  original position after the drag
         });
     });
-        
-    /* initialize the calendar
-    -----------------------------------------------------------------*/
+}
+/* initialize the calendar */
+function init() {
 
     var arr = [];
 

@@ -15,6 +15,8 @@ body {
     border: 1px solid #ccc;
     background: #eee;
     text-align: left;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
     
 #external-events h4 {
