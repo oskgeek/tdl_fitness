@@ -75,6 +75,7 @@ $(function () {
       oReq.open("POST", "http://localhost:8000/excercise/", true);
       oReq.onload = function(oEvent) {
         if (oReq.status == 200) {
+            $('#addExerciseModal').modal('hide');
             console.log('Uploaded!');
         } else {
             console.log('Error' + oReq.status + ' occurred when trying to upload your file.<br \/>');
