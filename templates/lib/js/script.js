@@ -42,11 +42,11 @@ $(function () {
             if (res.status == 'OK') {
                 $('#loginbox, #signupbox').hide();
                 $('#content').show();
-                init();
                 var email = $('#loginform [name="email"]').val();
                 var pw = $('#loginform [name="password"]').val();
                 setCookie('tdl_email', email);
                 setCookie('tdl_pw', pw);
+                init();
             };
             console.log("login success");
         })
