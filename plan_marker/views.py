@@ -21,8 +21,9 @@ def login(request):
 
         if user is not None:
             response_dict['status'] = 'OK'
+            response_dict['user_id'] = user.pk
             response_dict['user_type'] = user.userprofile.group
-            response_dict['last_login'] = user.last_login or str(datetime.datetime.now())
+            response_dict['plan_created'] = user.userprofile.plan_created
         else:
             response_dict['status'] = 'FAILED'
             
@@ -66,7 +67,7 @@ def excercise_handler(request):
             
             ex_obj = Excercise()
             ex_obj.name = request.POST['ex_name']
-            ex_obj.image_path = image_path
+            ex_obj.image_path = settings.MEDIA_URL + 'files_library/%s' % str(image.name).rstrip()
             ex_obj.save()
             
             response_dict['status'] = 'OK'
@@ -75,6 +76,31 @@ def excercise_handler(request):
             ex_vs = list(Excercise.objects.values_list('name', 'image_path'))
             response_dict['data'] = ex_vs
             response_dict['status'] = 'OK'
+
+    except Exception as ex:
+        response_dict['status'] = 'FAILED'
+        response_dict['Error'] = repr(ex)
+
+    return HttpResponse(json.dumps(response_dict))
+    
+    
+@csrf_exempt
+def plan_handler(request):
+    response_dict = {'status': 'UNKNOWN', 'Error': []}
+    try:
+        if request.method == 'POST':
+            user_id = request.POST['user_id']
+            plan_created = request.POST['plan_created']
+            
+            userp_obj = UserProfile.objects.get(user_id=user_id) 
+            userp_obj.plan_created = plan_created
+            userp_obj.save()
+            
+            response_dict['status'] = 'OK'
+        
+    except UserProfile.DoesNotExist:
+        response_dict['status'] = 'FAILED'
+        response_dict['Error'] = 'Sorry, unable to find user with this id, try again.'
 
     except Exception as ex:
         response_dict['status'] = 'FAILED'
