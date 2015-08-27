@@ -107,27 +107,27 @@
         <div class="modal fade" id="addExerciseModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-sm">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h5 class="modal-title" id="myModalLabel">Add Exercise</h5>
-                    </div>
-                    <div class="modal-body">
-                        <form>
+                    <form id="addExerciseForm" action="." method="POST" accept-charset="utf-8" name="add_ex_form">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h5 class="modal-title" id="myModalLabel">Add Exercise</h5>
+                        </div>
+                        <div class="modal-body">
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Exercise</label>
-                                <input type="text" class="form-control" id="exerciseName" placeholder="Exercise Name">
+                                <input name="ex_name" type="text" class="form-control" id="exerciseName" placeholder="Exercise Name">
                             </div>
                             <div class="form-group">
                                 <label for="exerciseImageFile">Image</label>
-                                <input type="file" id="exerciseImageFile">
+                                <input name="ex_image" type="file" id="exerciseImageFile">
                                 <p class="help-block">Add Exercise Image.</p>
                             </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button id="" type="submit" class="btn btn-primary">Submit</button>
-                    </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button id="addEx" type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -228,92 +228,7 @@
     </div>
     
     <script type="text/javascript">
-        $(function () {
-            // $('form').submit(function(event){
-            //     event.preventDefault();
-            // });
-            if (checkCookie('tdl_email') && checkCookie('tdl_pw')) {
-                $('#loginbox, signupbox').hide();
-                $('#content').show();
-                init();
-            };
-            
-            $('#btn-signup').click(function(event) {
-                $.ajax({
-                    url: 'http://localhost:8000/signup/',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: $('#signupform').serialize(),
-                })
-                .done(function(res) {
-                    if (res.status == 'OK') {
-                        $('#signupbox').hide()
-                        $('#loginbox').show();
-                    };
-                    console.log("signup success");
-                })
-                .fail(function() {
-                    console.log("signup error");
-                })
-                .always(function() {
-                    console.log("signup complete");
-                });
-                
-            });
-            $('#btn-login').click(function(event) {
-                $.ajax({
-                    url: 'http://localhost:8000/login/',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: $('#loginform').serialize(),
-                })
-                .done(function(res) {
-                    if (res.status == 'OK') {
-                        $('#loginbox, #signupbox').hide();
-                        $('#content').show();
-                        init();
-                        var email = $('#loginform [name="email"]').val();
-                        var pw = $('#loginform [name="password"]').val();
-                        setCookie('tdl_email', email);
-                        setCookie('tdl_pw', pw);
-                    };
-                    console.log("login success");
-                })
-                .fail(function() {
-                    console.log("login error");
-                })
-                .always(function() {
-                    console.log("login complete");
-                });
-                
-            });
-            $('#sign_out').click(function(event) {
-                document.cookie = "tdl_email=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-                document.cookie = "tdl_pw=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-                $('#content').hide();
-                $('#loginbox').show();
-            });
-        })
-        function setCookie(cname, cvalue) {
-
-            document.cookie = cname + "=" + cvalue;
-        }
-        function getCookie(cname) {
-            var name = cname + "=";
-            var ca = document.cookie.split(';');
-            for(var i=0; i<ca.length; i++) {
-                var c = ca[i];
-                while (c.charAt(0)==' ') c = c.substring(1);
-                if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
-            }
-            return "";
-        }
-        function checkCookie(cname) {
-            var cname=getCookie(cname);
-            if (cname!="") {
-                return true;
-            }
-        }
+ 
         // window.addEventListener("beforeunload", function (e) {
         //     document.cookie = "tdl_email=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
         //     document.cookie = "tdl_pw=; expires=Thu, 01 Jan 1970 00:00:00 UTC";

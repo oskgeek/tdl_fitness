@@ -1,3 +1,109 @@
+var obj = {};
+$(function () {
+    // $('form').submit(function(event){
+    //     event.preventDefault();
+    // });
+
+    if (checkCookie('tdl_email') && checkCookie('tdl_pw')) {
+        $('#loginbox, signupbox').hide();
+        $('#content').show();
+        init();
+    };
+    
+    $('#btn-signup').click(function(event) {
+        $.ajax({
+            url: 'http://localhost:8000/signup/',
+            type: 'POST',
+            dataType: 'json',
+            data: $('#signupform').serialize(),
+        })
+        .done(function(res) {
+            if (res.status == 'OK') {
+                $('#signupbox').hide()
+                $('#loginbox').show();
+            };
+            console.log("signup success");
+        })
+        .fail(function() {
+            console.log("signup error");
+        })
+        .always(function() {
+            console.log("signup complete");
+        });
+    });
+    $('#btn-login').click(function(event) {
+        $.ajax({
+            url: 'http://localhost:8000/login/',
+            type: 'POST',
+            dataType: 'json',
+            data: $('#loginform').serialize(),
+        })
+        .done(function(res) {
+            if (res.status == 'OK') {
+                $('#loginbox, #signupbox').hide();
+                $('#content').show();
+                init();
+                var email = $('#loginform [name="email"]').val();
+                var pw = $('#loginform [name="password"]').val();
+                setCookie('tdl_email', email);
+                setCookie('tdl_pw', pw);
+            };
+            console.log("login success");
+        })
+        .fail(function() {
+            console.log("login error");
+        })
+        .always(function() {
+            console.log("login complete");
+        });
+    });
+    $('#sign_out').click(function(event) {
+        document.cookie = "tdl_email=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+        document.cookie = "tdl_pw=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+        window.location.reload();
+    });
+    var form = document.forms.namedItem("add_ex_form");
+    form.addEventListener('submit', function(ev) {
+      ev.preventDefault();
+
+      var oOutput = document.querySelector("div"),
+          oData = new FormData(form);
+
+      oData.append("CustomField", "This is some extra data");
+
+      var oReq = new XMLHttpRequest();
+      oReq.open("POST", "http://localhost:8000/exercise/", true);
+      oReq.onload = function(oEvent) {
+        if (oReq.status == 200) {
+            console.log('Uploaded!');
+        } else {
+            console.log('Error' + oReq.status + ' occurred when trying to upload your file.<br \/>');
+        }
+      };
+
+      oReq.send(oData);
+    }, false);
+})
+function setCookie(cname, cvalue) {
+
+    document.cookie = cname + "=" + cvalue;
+}
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+    }
+    return "";
+}
+function checkCookie(cname) {
+    var cname=getCookie(cname);
+    if (cname!="") {
+        return true;
+    }
+}
 function init() {
 
     /* initialize the external events
@@ -121,7 +227,7 @@ function init() {
 
     $('div.fc-right').append('<div id="calendarTrash" class="hidden-print calendar-trash" title="Drop the event here to delete!"><img src="lib/trash.png"></img></div>');
     $('div.fc-left').append('<button id="print" type="button" class="hidden-print fc-button fc-state-default fc-corner-left fc-corner-right">Print</button>')
-        .append('<button id="addEx" type="button" data-toggle="modal" data-target="#addExerciseModal" class="hidden-print fc-button fc-state-default fc-corner-left fc-corner-right">Add Exercise</button>');
+        .append('<button id="addExModal" type="button" data-toggle="modal" data-target="#addExerciseModal" class="hidden-print fc-button fc-state-default fc-corner-left fc-corner-right">Add Exercise</button>');
 
     /* Modal
     ---------------------------------------------------------------- */
@@ -142,10 +248,7 @@ function init() {
         // PrintElem($('.fc-view-container'));
         window.print();
     })
-    
 };
-
-var obj = {};
 function saveChanges(id, elem) {
     var exSet = $('#ex_set').val();
     var exReps =$('#ex_reps').val();
@@ -166,7 +269,6 @@ function PrintElem(elem) {
 
     Popup($(elem).html());
 }
-
 function Popup(data) {
     var mywindow = window.open('', 'My Exercise Schedule', 'height=600,width=600');
     mywindow.document.open();
