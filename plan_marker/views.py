@@ -34,17 +34,22 @@ def signup(request):
     response_dict = {'status': 'UNKNOWN', 'Error': []}
     
     if request.method == 'POST':
-        email = request.POST.get('email', None)
-        password = request.POST.get('password', None)
+        try:
+            email = request.POST.get('email', None)
+            password = request.POST.get('password', None)
+            
+            user = User.objects.create_user(username=email, password=password, email=email)
+            user.save()
+            user_profile = UserProfile()
+            user_profile.user = user
+            user_profile.group = 'MM'
+            user_profile.save()
+            
+            response_dict['status'] = 'OK'
         
-        user = User.objects.create_user(username=email, password=password, email=email)
-        user.save()
-        user_profile = UserProfile()
-        user_profile.user = user
-        user_profile.group = 'MM'
-        user_profile.save()
-        
-        response_dict['status'] = 'OK'
+        except Exception as ex:
+            response_dict['status'] = 'FAILED'
+            response_dict['Error'] = repr(ex)
 
     return HttpResponse(json.dumps(response_dict))
 
@@ -53,14 +58,14 @@ def excercise_handler(request):
     response_dict = {'status': 'UNKNOWN', 'Error': []}
     try:
         if request.method == 'POST':
-            image = request.FILES['image']
-            image_path = settings.MEDIA_ROOT + 'files_library/%s' % str(image.name)
+            image = request.FILES['ex_image']
+            image_path = settings.MEDIA_ROOT + 'files_library/%s' % str(image.name).rstrip()
             with open(image_path, 'wb+') as image_file:
                 for chunk in image.chunks():
                     image_file.write(chunk)
             
             ex_obj = Excercise()
-            ex_obj.name = request.POST['name']
+            ex_obj.name = request.POST['ex_name']
             ex_obj.image_path = image_path
             ex_obj.save()
             

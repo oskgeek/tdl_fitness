@@ -72,7 +72,7 @@ $(function () {
       oData.append("CustomField", "This is some extra data");
 
       var oReq = new XMLHttpRequest();
-      oReq.open("POST", "http://localhost:8000/exercise/", true);
+      oReq.open("POST", "http://localhost:8000/excercise/", true);
       oReq.onload = function(oEvent) {
         if (oReq.status == 200) {
             console.log('Uploaded!');
