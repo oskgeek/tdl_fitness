@@ -7,6 +7,7 @@ $(function () {
     if (checkCookie('tdl_email') && checkCookie('tdl_pw')) {
         $('#loginbox, signupbox').hide();
         $('#content').show();
+        getExerciseList();
         init();
     };
     
@@ -24,7 +25,7 @@ $(function () {
                 $('#loginbox').show();
             }
             else if (res.status == 'FAILED'){
-                errorAlert($that, res.Error);
+                errorAlert($that, res.Error.length?res.Error:'');
             }
         })
         .fail(function() {
@@ -41,16 +42,14 @@ $(function () {
         })
         .done(function(res) {
             if (res.status == 'OK') {
-                $('#loginbox, #signupbox').hide();
-                $('#content').show();
                 var email = $('#loginform [name="email"]').val();
                 var pw = $('#loginform [name="password"]').val();
                 setCookie('tdl_email', email);
                 setCookie('tdl_pw', pw);
-                init();
+                window.location.reload();
             }
             else if (res.status == 'FAILED'){
-                errorAlert($that, res.Error);
+                errorAlert($that, res.Error.length?res.Error:'');
             }
         })
         .fail(function() {
@@ -88,6 +87,10 @@ $(function () {
         }, false);
     /* Add Exercise POST - END */
 
+    var calendar_height = $('#calendar').height();
+    $('#external-events').css('height', calendar_height);
+})
+function getExerciseList () {
     $.get('http://localhost:8000/excercise/', function(data) {
         var data = $.parseJSON(data);
         if (data.status == 'OK') {
@@ -96,11 +99,12 @@ $(function () {
                 $('#external-events').append('<div class="fc-event"><div><img src="http://localhost:8000'+file_path+'"></div>'+val[0]+'</div>')
             });
             initExternalEvents();
-        };
+        }
+        else if (res.status == 'FAILED'){
+            errorAlert($('#content'), res.Error);
+        }
     });
-    var calendar_height = $('#calendar').height();
-    $('#external-events').css('height', calendar_height);
-})
+}
 function setCookie(cname, cvalue) {
 
     document.cookie = cname + "=" + cvalue;
@@ -307,7 +311,7 @@ function errorAlert (elem, error) {
         error = error?error:defaultMsg;
         var err = '<div class="alert alert-danger alert-dismissible" role="alert">'
                 +'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                +'<strong>Oops!</strong>'+error+'</div>';
+                +'<strong>Oops! </strong>'+error+'</div>';
         $(elem).before(err);
     };
 }
