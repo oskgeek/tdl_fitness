@@ -13,10 +13,11 @@
     <script src="lib/js/bootstrap.min.js"></script>
     <script src="lib/js/moment.min.js"></script>
     <script src="lib/js/fullcalendar.js"></script>
+    <script src="lib/js/settings.js"></script>
     <script src="lib/js/script.js"></script>
 </head>
 <body>
-    <div id="content" style="display:none;">
+    <div id="content" class="hidden">
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <!-- Brand and toggle get grouped for better mobile display -->
@@ -137,8 +138,8 @@
           </div>
         </footer>
     </div>
-    <div class="container">
-        <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+    <div id="authentication" class="container">
+        <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 hidden">
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <div class="panel-title">Sign In</div>
@@ -170,7 +171,7 @@
                             <div class="col-md-12 control">
                                 <div style="border-top: 1px solid#888; padding-top:15px; font-size:85%">
                                     Don't have an account! 
-                                    <a href="#" onclick="$('#loginbox').hide(); $('#signupbox').show()">Sign Up Here</a>
+                                    <a href="#" onclick="$('#loginbox').addClass('hidden'); $('#signupbox').removeClass('hidden')">Sign Up Here</a>
                                 </div>
                             </div>
                         </div>    
@@ -178,11 +179,11 @@
                 </div>                     
             </div>  
         </div>
-        <div id="signupbox" style="display:none; margin-top:50px" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+        <div id="signupbox" style="margin-top:50px" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 hidden">
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <div class="panel-title">Sign Up</div>
-                    <div style="float:right; font-size: 85%; position: relative; top:-10px"><a id="signinlink" href="#" onclick="$('#signupbox').hide(); $('#loginbox').show()">Sign In</a></div>
+                    <div style="float:right; font-size: 85%; position: relative; top:-10px"><a id="signinlink" href="#" onclick="$('#signupbox').addClass('hidden'); $('#loginbox').removeClass('hidden')">Sign In</a></div>
                 </div>  
                 <div class="panel-body">
                     <form id="signupform" class="form-horizontal" role="form">

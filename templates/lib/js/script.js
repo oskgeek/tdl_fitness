@@ -3,10 +3,12 @@ $(function () {
     // $('form').submit(function(event){
     //     event.preventDefault();
     // });
-
+        
+    $('#loginbox').removeClass('hidden');
+    
     if (checkCookie('tdl_email') && checkCookie('tdl_pw')) {
-        $('#loginbox, signupbox').hide();
-        $('#content').show();
+        $('#loginbox, #signupbox').addClass('hidden');
+        $('#content').removeClass('hidden');
         getExerciseList();
 
         var today = new Date();
@@ -31,15 +33,15 @@ $(function () {
     $('#btn-signup').click(function(event) {
         var $that = $(this);
         $.ajax({
-            url: 'http://localhost:8000/signup/',
+            url: 'http://'+host+'/signup/',
             type: 'POST',
             dataType: 'json',
             data: $('#signupform').serialize(),
         })
         .done(function(res) {
             if (res.status == 'OK') {
-                $('#signupbox').hide()
-                $('#loginbox').show();
+                $('#signupbox').addClass('hidden');
+                $('#loginbox').removeClass('hidden');
             }
             else if (res.status == 'FAILED'){
                 errorAlert($that, res.Error.length?res.Error:'');
@@ -52,7 +54,7 @@ $(function () {
     $('#btn-login').click(function(event) {
         var $that = $(this);
         $.ajax({
-            url: 'http://localhost:8000/login/',
+            url: 'http://'+host+'/login/',
             type: 'POST',
             dataType: 'json',
             data: $('#loginform').serialize(),
@@ -93,10 +95,8 @@ $(function () {
           var oOutput = document.querySelector("div"),
               oData = new FormData(form);
 
-          oData.append("CustomField", "This is some extra data");
-
           var oReq = new XMLHttpRequest();
-          oReq.open("POST", "http://localhost:8000/excercise/", true);
+          oReq.open('POST', 'http://'+host+'/excercise/', true);
           oReq.onload = function(oEvent) {
             if (oReq.status == 200) {
                 window.location.reload();
@@ -114,12 +114,12 @@ $(function () {
     $('#external-events').css('height', calendar_height);
 })
 function getExerciseList () {
-    $.get('http://localhost:8000/excercise/', function(data) {
+    $.get('http://'+host+'/excercise/', function(data) {
         var data = $.parseJSON(data);
         if (data.status == 'OK') {
             $.each(data.data, function(index, val) {
                 var file_path = val[1].split('..')[1];
-                $('#external-events').append('<div class="fc-event"><div><img src="http://localhost:8000'+file_path+'"></div>'+val[0]+'</div>')
+                $('#external-events').append('<div class="fc-event"><div><img src="http://'+host+file_path+'"></div>'+val[0]+'</div>')
             });
             initExternalEvents();
         }
@@ -280,7 +280,7 @@ function init(user_type, current_date) {
             'user_id': userId,
             'plan_created': current_date
         }
-        $.post('http://localhost:8000/plan_created/', planCreated, function(data, textStatus, xhr) {
+        $.post('http://'+host+'/plan_created/', planCreated, function(data, textStatus, xhr) {
             console.log('plan created!');
         });
         window.print();
