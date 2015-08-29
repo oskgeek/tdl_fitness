@@ -259,7 +259,7 @@ function init(user_type, current_date) {
             }
         }
     })
-    var isHidden = (user_type=="MM")?'':' hidden ';
+    var isHidden = (user_type=="AD")?'':' hidden ';
     $('div.fc-right').append('<div id="calendarTrash" class="hidden-print calendar-trash" title="Drop the event here to delete!"><img src="lib/trash.png"></img></div>');
     $('div.fc-left')
     .append('<button id="print" type="button" class="hidden-print fc-button fc-state-default fc-corner-left fc-corner-right">Print</button>')
