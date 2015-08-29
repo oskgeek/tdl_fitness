@@ -6,7 +6,7 @@ class UserProfile(models.Model):
     ACCOUNT_TYPE = (('AD', 'ADMIN'), ('MM', 'MEMBER'))
     user = models.OneToOneField(User)
     group = models.CharField(max_length=255, choices=ACCOUNT_TYPE)
-    plan_created = models.DateField(blank=True, null=True)
+    plan_created = models.CharField(max_length=255, blank=True, null=True)
 
     def __unicode__(self):
         return self.user.username
