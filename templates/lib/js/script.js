@@ -7,10 +7,29 @@ $(function () {
     if (checkCookie('tdl_email') && checkCookie('tdl_pw')) {
         $('#loginbox, signupbox').hide();
         $('#content').show();
-        init();
+        getExerciseList();
+
+        var today = new Date();
+        var dd = today.getDate().toString();
+        dd = (dd.length==1)?'0'+dd:dd;
+        var mm = (today.getMonth()+1).toString(); //January is 0!
+        mm = (mm.length==1)?'0'+mm:mm;
+        var yyyy = today.getFullYear().toString();
+        var currentDate = mm+'/'+dd+'/'+yyyy;
+        var lastPlanDate = getCookie('plan_created').toString();
+
+        var date1 = new Date(lastPlanDate);
+        var date2 = new Date(currentDate);
+        var daysDiff = Math.floor((date2 - date1) / (1000*60*60*24));
+        if (daysDiff >= 60) {
+            errorAlert ($('#content h3'), "It's been a while you haven't change your Exercise Schedule, We recommend you to change your plan, Thank You!");
+        };
+
+        init(getCookie('user_type'), currentDate);
     };
     
     $('#btn-signup').click(function(event) {
+        var $that = $(this);
         $.ajax({
             url: 'http://localhost:8000/signup/',
             type: 'POST',
@@ -21,17 +40,17 @@ $(function () {
             if (res.status == 'OK') {
                 $('#signupbox').hide()
                 $('#loginbox').show();
-            };
-            console.log("signup success");
+            }
+            else if (res.status == 'FAILED'){
+                errorAlert($that, res.Error.length?res.Error:'');
+            }
         })
         .fail(function() {
-            console.log("signup error");
+            errorAlert($(that), '');
         })
-        .always(function() {
-            console.log("signup complete");
-        });
     });
     $('#btn-login').click(function(event) {
+        var $that = $(this);
         $.ajax({
             url: 'http://localhost:8000/login/',
             type: 'POST',
@@ -40,26 +59,29 @@ $(function () {
         })
         .done(function(res) {
             if (res.status == 'OK') {
-                $('#loginbox, #signupbox').hide();
-                $('#content').show();
                 var email = $('#loginform [name="email"]').val();
                 var pw = $('#loginform [name="password"]').val();
                 setCookie('tdl_email', email);
                 setCookie('tdl_pw', pw);
-                init();
-            };
-            console.log("login success");
+                setCookie('user_id', res.user_id);
+                setCookie('user_type', res.user_type);
+                setCookie('plan_created', res.plan_created);
+                window.location.reload();
+            }
+            else if (res.status == 'FAILED'){
+                errorAlert($that, res.Error.length?res.Error:'');
+            }
         })
         .fail(function() {
-            console.log("login error");
+            errorAlert($that, '');
         })
-        .always(function() {
-            console.log("login complete");
-        });
     });
     $('#sign_out').click(function(event) {
         document.cookie = "tdl_email=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
         document.cookie = "tdl_pw=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+        document.cookie = "user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+        document.cookie = "user_type=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+        document.cookie = "plan_created=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
         window.location.reload();
     });
 
@@ -88,6 +110,10 @@ $(function () {
         }, false);
     /* Add Exercise POST - END */
 
+    var calendar_height = $('#calendar').height();
+    $('#external-events').css('height', calendar_height);
+})
+function getExerciseList () {
     $.get('http://localhost:8000/excercise/', function(data) {
         var data = $.parseJSON(data);
         if (data.status == 'OK') {
@@ -96,11 +122,12 @@ $(function () {
                 $('#external-events').append('<div class="fc-event"><div><img src="http://localhost:8000'+file_path+'"></div>'+val[0]+'</div>')
             });
             initExternalEvents();
-        };
+        }
+        else if (res.status == 'FAILED'){
+            errorAlert($('#content'), res.Error);
+        }
     });
-    var calendar_height = $('#calendar').height();
-    $('#external-events').css('height', calendar_height);
-})
+}
 function setCookie(cname, cvalue) {
 
     document.cookie = cname + "=" + cvalue;
@@ -139,16 +166,10 @@ function initExternalEvents () {
     });
 }
 /* initialize the calendar */
-function init() {
+function init(user_type, current_date) {
 
     var arr = [];
-
-    // var today = new Date();
-    // var dd = today.getDate();
-    // var mm = today.getMonth()+1; //January is 0!
-    // var yyyy = today.getFullYear();
-    // var date = yyyy+'-0'+mm+'-0'+dd;
-
+    
     var m = moment();
     m = m.stripTime();
     m = m.format();
@@ -238,17 +259,11 @@ function init() {
             }
         }
     })
-
+    var isHidden = (user_type=="MM")?'':' hidden ';
     $('div.fc-right').append('<div id="calendarTrash" class="hidden-print calendar-trash" title="Drop the event here to delete!"><img src="lib/trash.png"></img></div>');
-    $('div.fc-left').append('<button id="print" type="button" class="hidden-print fc-button fc-state-default fc-corner-left fc-corner-right">Print</button>')
-        .append('<button id="addExModal" type="button" data-toggle="modal" data-target="#addExerciseModal" class="hidden-print fc-button fc-state-default fc-corner-left fc-corner-right">Add Exercise</button>');
-
-    /* Modal
-    ---------------------------------------------------------------- */
-
-    $('#myModal').on('shown.bs.modal', function () {
-
-    })
+    $('div.fc-left')
+    .append('<button id="print" type="button" class="hidden-print fc-button fc-state-default fc-corner-left fc-corner-right">Print</button>')
+    .append('<button id="addExModal" type="button" data-toggle="modal" data-target="#addExerciseModal" class="'+isHidden+'hidden-print fc-button fc-state-default fc-corner-left fc-corner-right">Add Exercise</button>');
 
     $('.fc-widget-header .fc-sun').append('<div>Routine 1</div><div class="ex-header">Chest & Tricep</div>');
     $('.fc-widget-header .fc-mon').append('<div>Routine 2</div><div class="ex-header">Soulder & Legs</div>');
@@ -260,6 +275,14 @@ function init() {
 
     $('#print').click(function () {
         // PrintElem($('.fc-view-container'));
+        var userId = getCookie('user_id');
+        var planCreated = {
+            'user_id': userId,
+            'plan_created': current_date
+        }
+        $.post('http://localhost:8000/plan_created/', planCreated, function(data, textStatus, xhr) {
+            console.log('plan created!');
+        });
         window.print();
     })
 };
@@ -300,4 +323,14 @@ function Popup(data) {
     mywindow.close();
 
     return true;
+}
+function errorAlert (elem, error) {
+    if ($('.alert-danger').length == 0) {
+        var defaultMsg = 'Something went Wrong!';
+        error = error?error:defaultMsg;
+        var err = '<div class="alert alert-danger alert-dismissible" role="alert">'
+                +'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                +'<strong>Oops! </strong>'+error+'</div>';
+        $(elem).before(err);
+    };
 }
