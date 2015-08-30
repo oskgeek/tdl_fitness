@@ -1,0 +1,1 @@
+function Host(a,b){return host=a.toString()+":"+b.toString()}var host="";Host("localhost","8000");
